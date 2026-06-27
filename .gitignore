@@ -23,6 +23,9 @@ Thumbs.db
 # VSCode
 .vscode/
 
+# Codelab folder (has its own git repo — not part of this project)
+codelab-maps-platform-101-react-js/
+
 # Uploads (local files)
 server/uploads/*
 !server/uploads/.gitkeep
