@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DisPharma — Inter-Pharmacy Network</title>
+  <meta name="description" content="DisPharma: Connect with nearby pharmacies, search medicines, manage stock, and generate bills with 4% margin — India's inter-pharmacy network." />
+  </head>
+  <body>
+    <script>
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
