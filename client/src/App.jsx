@@ -39,8 +39,8 @@ const AppLayout = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-green-200">
       <Navbar />
-      <main className="pt-32 pb-16 min-h-screen" style={{ paddingTop: '120px' }}>
-        <div className="max-w-[1400px] mx-auto px-6">
+      <main className="pt-16 pb-16 min-h-screen" style={{ paddingTop: '64px' }}>
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6">
           <Outlet />
         </div>
       </main>

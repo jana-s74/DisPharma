@@ -28,15 +28,15 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-[#a3e635] selection:text-[#0f3b2d]">
 
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-10 py-5 max-w-[1400px] mx-auto bg-white relative z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 overflow-hidden">
+      <nav className="flex items-center justify-between px-4 sm:px-6 md:px-10 py-4 md:py-5 max-w-[1400px] mx-auto bg-white relative z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-9 h-9 sm:w-11 sm:h-11 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 overflow-hidden">
             <img src="/logo.png" alt="DisPharma Logo" className="w-full h-full object-cover" />
           </div>
-          <span className="font-extrabold text-2xl tracking-tight text-[#0f3b2d] uppercase">DisPharma</span>
+          <span className="font-extrabold text-lg sm:text-xl md:text-2xl tracking-tight text-[#0f3b2d] uppercase">DisPharma</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-10 font-semibold text-sm text-slate-600">
+        <div className="hidden md:flex items-center gap-6 lg:gap-10 font-semibold text-sm text-slate-600">
           <a href="#home" className="text-[#0f3b2d] hover:text-[#a3e635] transition-colors">Home</a>
           <a href="#services" className="hover:text-[#0f3b2d] transition-colors">Services</a>
           <a href="#shop" className="hover:text-[#0f3b2d] transition-colors">Shop</a>
@@ -44,18 +44,18 @@ const LandingPage = () => {
           <a href="#contact" className="hover:text-[#0f3b2d] transition-colors">Contact</a>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           {isAuthenticated ? (
             <button
               onClick={() => navigate('/search')}
-              className="bg-[#0f3b2d] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-slate-800 transition-colors shadow-lg"
+              className="bg-[#0f3b2d] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-semibold hover:bg-slate-800 transition-colors shadow-lg"
             >
-              Go to Dashboard
+              Dashboard
             </button>
           ) : (
             <>
-              <Link to="/login" className="font-semibold text-slate-600 hover:text-[#0f3b2d] transition-colors">Log In</Link>
-              <Link to="/register" className="bg-[#0f3b2d] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-slate-800 transition-colors shadow-lg border-2 border-transparent hover:border-[#a3e635]">
+              <Link to="/login" className="font-semibold text-sm text-slate-600 hover:text-[#0f3b2d] transition-colors hidden sm:block">Log In</Link>
+              <Link to="/register" className="bg-[#0f3b2d] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-semibold hover:bg-slate-800 transition-colors shadow-lg border-2 border-transparent hover:border-[#a3e635]">
                 Get Started
               </Link>
             </>
@@ -64,44 +64,42 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <div id="home" className="max-w-[1400px] mx-auto px-6 mb-16 relative z-10 scroll-mt-32">
-        <div className="bg-[#0b3124] rounded-[2.5rem] relative overflow-hidden pt-16 px-10 md:px-20 min-h-[500px] flex flex-col md:flex-row items-center shadow-2xl">
+      <div id="home" className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 mb-10 sm:mb-16 relative z-10 scroll-mt-32">
+        <div className="bg-[#0b3124] rounded-2xl sm:rounded-[2.5rem] relative overflow-hidden pt-10 sm:pt-16 px-5 sm:px-8 md:px-16 min-h-[380px] sm:min-h-[500px] flex flex-col md:flex-row items-center shadow-2xl">
 
           {/* Huge "Pharmacy" Text */}
-          <div className="absolute top-8 left-0 right-0 text-center pointer-events-none select-none z-0">
-            <h1 className="text-[14vw] font-black tracking-tighter leading-none text-[#a3e635] opacity-[0.15]">
+          <div className="absolute top-4 sm:top-8 left-0 right-0 text-center pointer-events-none select-none z-0">
+            <h1 className="text-[18vw] sm:text-[14vw] font-black tracking-tighter leading-none text-[#a3e635] opacity-[0.10] sm:opacity-[0.15]">
               Pharm<span className="text-[#8ef34b]">acy</span>
             </h1>
           </div>
 
-          <div className="relative z-10 w-full md:w-1/2 mt-10 md:mt-24 pb-16">
-            <h2 className="text-3xl md:text-6xl font-bold text-white mb-6 leading-[1.1]">
+          <div className="relative z-10 w-full md:w-1/2 mt-6 sm:mt-10 md:mt-24 pb-8 sm:pb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-[1.1]">
               India's Premiere <br />
               <span className="text-[#a3e635]">Inter-Pharmacy</span> <br />
               Network
             </h2>
-            <p className="text-emerald-100/80 mb-8 max-w-sm text-lg leading-relaxed">
+            <p className="text-emerald-100/80 mb-6 sm:mb-8 max-w-sm text-sm sm:text-base lg:text-lg leading-relaxed">
               Connect with nearby medicals, search real-time stock, and refer customers with an exclusive 4% margin system.
             </p>
             <button
               onClick={() => navigate(isAuthenticated ? '/search' : '/register')}
-              className="bg-white text-[#0f3b2d] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#a3e635] hover:scale-105 transition-all duration-300 shadow-xl inline-flex items-center gap-2"
+              className="bg-white text-[#0f3b2d] px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-[#a3e635] hover:scale-105 transition-all duration-300 shadow-xl inline-flex items-center gap-2"
             >
               Start Now
               <span>→</span>
             </button>
           </div>
 
-          <div className="relative z-10 w-full md:w-1/2 flex justify-center items-end h-full">
-            {/* Doctor Image - standing over the text */}
+          <div className="relative z-10 w-full md:w-1/2 flex justify-center items-end h-full mt-4 md:mt-0">
             <img
               src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80"
               alt="Pharmacist"
-              className="object-cover rounded-t-full border-4 border-[#a3e635]/20 shadow-[0_0_50px_rgba(163,230,53,0.15)] h-[450px] object-top"
+              className="object-cover rounded-t-full border-4 border-[#a3e635]/20 shadow-[0_0_50px_rgba(163,230,53,0.15)] h-[260px] sm:h-[360px] md:h-[450px] object-top"
             />
-            {/* Floating generic medicine box */}
-            <div className="absolute bottom-16 -left-8 bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 shadow-2xl animate-floating">
-              <div className="w-24 h-24 bg-white rounded-2xl overflow-hidden shadow-inner">
+            <div className="absolute bottom-8 sm:bottom-16 -left-2 sm:-left-8 bg-white/10 backdrop-blur-md p-2 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl">
+              <div className="w-14 h-14 sm:w-24 sm:h-24 bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-inner">
                 <img src="/generic_medicine_box.png" alt="Medicine" className="w-full h-full object-cover mix-blend-multiply" />
               </div>
             </div>
@@ -110,12 +108,12 @@ const LandingPage = () => {
       </div>
 
       {/* Services Section */}
-      <div id="services" className="max-w-[1400px] mx-auto px-6 mb-24 scroll-mt-32">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl font-bold text-[#0f3b2d] mb-4">Our Services</h3>
-          <p className="text-slate-500 max-w-2xl mx-auto">Everything you need to run your pharmacy efficiently and grow your business network.</p>
+      <div id="services" className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 mb-14 sm:mb-24 scroll-mt-32">
+        <div className="text-center mb-8 sm:mb-16">
+          <h3 className="text-2xl sm:text-3xl font-bold text-[#0f3b2d] mb-3 sm:mb-4">Our Services</h3>
+          <p className="text-slate-500 max-w-2xl mx-auto text-sm sm:text-base">Everything you need to run your pharmacy efficiently and grow your business network.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {[
             { icon: '/icons/search.png', title: 'Smart Search', desc: 'Find medicines instantly across nearby pharmacies when you run out of stock.' },
             { icon: '/icons/margin.png', title: 'Earn Margin', desc: 'Refer customers to other pharmacies and earn an instant 4% margin.' },
@@ -133,12 +131,12 @@ const LandingPage = () => {
       </div>
 
       {/* Popular Categories */}
-      <div id="shop" className="max-w-5xl mx-auto px-6 mb-24 text-center scroll-mt-32">
-        <h3 className="text-3xl font-bold text-[#0f3b2d] mb-12">Popular Categories</h3>
-        <div className="flex flex-wrap justify-center gap-10 md:gap-16">
+      <div id="shop" className="max-w-5xl mx-auto px-3 sm:px-4 md:px-6 mb-14 sm:mb-24 text-center scroll-mt-32">
+        <h3 className="text-2xl sm:text-3xl font-bold text-[#0f3b2d] mb-8 sm:mb-12">Popular Categories</h3>
+        <div className="flex flex-wrap justify-center gap-5 sm:gap-8 md:gap-12 lg:gap-16">
           {categories.map((cat, i) => (
-            <div key={i} onClick={() => navigate(isAuthenticated ? '/search' : '/login')} className="flex flex-col items-center gap-4 group cursor-pointer">
-              <div className={`w-28 h-28 rounded-full ${cat.bgColor} ${cat.hoverBg} flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl p-0 overflow-hidden`}>
+            <div key={i} onClick={() => navigate(isAuthenticated ? '/search' : '/login')} className="flex flex-col items-center gap-2 sm:gap-4 group cursor-pointer">
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full ${cat.bgColor} ${cat.hoverBg} flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl p-0 overflow-hidden`}>
                 <img src={cat.icon} alt={cat.name} className="w-full h-full object-contain mix-blend-multiply" />
               </div>
               <span className="font-semibold text-slate-700 text-sm">{cat.name}</span>
@@ -148,11 +146,11 @@ const LandingPage = () => {
       </div>
 
       {/* Banner Section */}
-      <div className="max-w-[1400px] mx-auto px-6 mb-24 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 mb-14 sm:mb-24 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
         {/* Dark Banner */}
-        <div className="bg-[#0f3b2d] rounded-3xl p-10 flex flex-col justify-center relative overflow-hidden shadow-2xl group">
-          <div className="absolute top-6 right-6 bg-[#a3e635] text-[#0f3b2d] text-xs font-bold px-3 py-1 rounded-full">DELIVERY</div>
-          <h3 className="text-3xl font-bold text-white max-w-[250px] mb-6 leading-tight">
+        <div className="bg-[#0f3b2d] rounded-2xl sm:rounded-3xl p-6 sm:p-10 flex flex-col justify-center relative overflow-hidden shadow-2xl group">
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-[#a3e635] text-[#0f3b2d] text-xs font-bold px-3 py-1 rounded-full">DELIVERY</div>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white max-w-[250px] mb-4 sm:mb-6 leading-tight">
             Free Delivery Within <span className="text-[#a3e635]">10 km</span>
           </h3>
           <button onClick={() => navigate(isAuthenticated ? '/search' : '/register')} className="self-start bg-white/10 hover:bg-white/20 text-white border border-white/30 px-6 py-2.5 rounded-full font-semibold transition-all">
@@ -167,9 +165,9 @@ const LandingPage = () => {
         </div>
 
         {/* Yellow Banner */}
-        <div className="bg-[#facc15] rounded-3xl p-10 flex flex-col justify-center relative overflow-hidden shadow-2xl group">
-          <div className="absolute top-6 right-6 bg-white text-[#ca8a04] text-xs font-bold px-3 py-1 rounded-full shadow-sm">FEATURED</div>
-          <h3 className="text-3xl font-black text-slate-900 max-w-[300px] mb-6 leading-tight uppercase tracking-tight">
+        <div className="bg-[#facc15] rounded-2xl sm:rounded-3xl p-6 sm:p-10 flex flex-col justify-center relative overflow-hidden shadow-2xl group">
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-white text-[#ca8a04] text-xs font-bold px-3 py-1 rounded-full shadow-sm">FEATURED</div>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 max-w-[300px] mb-4 sm:mb-6 leading-tight uppercase tracking-tight">
             You can enjoy <span className="text-white drop-shadow-md">5% discount</span> using our network
           </h3>
           <button onClick={() => navigate(isAuthenticated ? '/search' : '/register')} className="self-start bg-white text-[#ca8a04] hover:bg-slate-50 px-6 py-2.5 rounded-full font-bold shadow-md transition-all hover:shadow-lg">
@@ -185,8 +183,8 @@ const LandingPage = () => {
       </div>
 
       {/* Footer (About & Contact) */}
-      <footer id="contact" className="bg-[#0f3b2d] text-emerald-100/60 py-16 scroll-mt-10 mt-auto">
-        <div id="about" className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <footer id="contact" className="bg-[#0f3b2d] text-emerald-100/60 py-10 sm:py-16 scroll-mt-10 mt-auto">
+        <div id="about" className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
@@ -213,7 +211,7 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-        <div className="max-w-[1400px] mx-auto px-6 mt-16 pt-8 border-t border-white/10 text-center text-sm">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 mt-10 sm:mt-16 pt-6 sm:pt-8 border-t border-white/10 text-center text-sm">
           &copy; {new Date().getFullYear()} DisPharma Network. All rights reserved.
         </div>
       </footer>

@@ -4,12 +4,17 @@ import api from '../../utils/api';
 import StockList from './StockList';
 import AddMedicine from './AddMedicine';
 
-const InfoBadge = ({ label, value, icon }) => (
-  <div className="flex flex-col gap-1">
+const InfoBadge = ({ label, value, icon, wide = false }) => (
+  <div className={`flex flex-col gap-1 min-w-0 ${wide ? 'col-span-2 sm:col-span-1' : ''}`}>
     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
       <span>{icon}</span>{label}
     </p>
-    <p className="text-sm font-semibold text-slate-800 leading-tight">{value || '—'}</p>
+    <p
+      className="text-sm font-semibold text-slate-800 leading-tight truncate"
+      title={value || '—'}
+    >
+      {value || '—'}
+    </p>
   </div>
 );
 
@@ -172,9 +177,9 @@ const Profile = () => {
             <InfoBadge label="Owner" value={user?.ownerName} icon="👤" />
             <InfoBadge label="Phone" value={user?.phone} icon="📞" />
             <InfoBadge label="License No" value={user?.licenseNo} icon="📄" />
-            <InfoBadge label="Email" value={user?.email} icon="✉️" />
+            <InfoBadge label="Email" value={user?.email} icon="✉️" wide />
             <InfoBadge label="Pincode" value={user?.pincode} icon="📮" />
-            <InfoBadge label="Address" value={user?.address} icon="📍" />
+            <InfoBadge label="Address" value={user?.address} icon="📍" wide />
           </div>
         </div>
       </div>

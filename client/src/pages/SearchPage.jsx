@@ -83,11 +83,9 @@ const SearchPage = () => {
   return (
     <div className={`space-y-6 ${selectedItems.length > 0 ? 'pb-40' : ''}`}>
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Explore Medicines</h1>
-          <p className="text-slate-500 mt-1">Search across all nearby pharmacies or browse available stock</p>
-        </div>
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Explore Medicines</h1>
+        <p className="text-slate-500 mt-1 text-sm sm:text-base">Search across all nearby pharmacies or browse available stock</p>
       </div>
 
       {/* Current search badge */}

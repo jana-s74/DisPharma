@@ -105,31 +105,31 @@ const Dashboard = () => {
         <div className="absolute top-4 right-24 w-20 h-20 bg-white/5 rounded-full" />
         <div className="absolute -bottom-8 right-8 w-36 h-36 bg-white/5 rounded-full" />
 
-        <div className="relative px-7 py-6 flex items-center justify-between">
-          <div>
-            <p className="text-emerald-200 text-sm font-semibold uppercase tracking-widest mb-1">
+        <div className="relative px-4 sm:px-7 py-5 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <p className="text-emerald-200 text-xs sm:text-sm font-semibold uppercase tracking-widest mb-1">
               {greeting} 👋
             </p>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">
+            <h1 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight truncate">
               {user?.medicalName}
             </h1>
-            <p className="text-emerald-100/80 text-sm mt-1 max-w-md">
+            <p className="text-emerald-100/80 text-xs sm:text-sm mt-1 max-w-md hidden sm:block">
               Your pharmacy network dashboard — track profits, manage stock, and handle referrals all in one place.
             </p>
-            <div className="flex items-center gap-3 mt-4">
+            <div className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4 flex-wrap">
               <button
                 onClick={() => navigate('/search')}
-                className="bg-white text-[#16a34a] text-sm font-bold px-4 py-2 rounded-xl hover:bg-emerald-50 transition-colors shadow-sm flex items-center gap-2"
+                className="bg-white text-[#16a34a] text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl hover:bg-emerald-50 transition-colors shadow-sm flex items-center gap-1.5"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                Explore Medicines
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                Explore
               </button>
               <button
                 onClick={() => navigate('/bill')}
-                className="bg-white/15 border border-white/30 text-white text-sm font-bold px-4 py-2 rounded-xl hover:bg-white/25 transition-colors flex items-center gap-2"
+                className="bg-white/15 border border-white/30 text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl hover:bg-white/25 transition-colors flex items-center gap-1.5"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                View Bills
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Bills
               </button>
             </div>
           </div>
@@ -162,13 +162,13 @@ const Dashboard = () => {
         </div>
 
         {/* Bottom strip */}
-        <div className="bg-black/10 px-7 py-2 flex items-center gap-6 text-xs text-emerald-100/70 font-medium">
+        <div className="bg-black/10 px-4 sm:px-7 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-emerald-100/70 font-medium">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse inline-block" />
             Network Active
           </span>
-          <span>Owner: {user?.ownerName}</span>
-          <span>License: {user?.licenseNo}</span>
+          <span className="truncate max-w-[180px]">Owner: {user?.ownerName}</span>
+          <span className="truncate max-w-[180px] hidden sm:block">License: {user?.licenseNo}</span>
         </div>
       </div>
 
