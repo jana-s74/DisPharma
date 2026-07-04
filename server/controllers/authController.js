@@ -3,6 +3,22 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
 
+// ── Haversine distance (km) between two [lng, lat] GeoJSON coordinates ────────
+const haversineKm = ([lng1, lat1], [lng2, lat2]) => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
+// Max km allowed between login device and registered pharmacy (env or default 10)
+const MAX_LOGIN_KM = parseFloat(process.env.MAX_LOGIN_DISTANCE_KM || '10');
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -34,6 +50,12 @@ const register = async (req, res) => {
     const emailExists = await User.findOne({ email });
     if (emailExists) {
       return res.status(400).json({ message: 'Email already registered' });
+    }
+
+    // Block registration using the admin email
+    const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+    if (ADMIN_EMAIL && email.trim().toLowerCase() === ADMIN_EMAIL) {
+      return res.status(400).json({ message: 'This email address cannot be used for registration' });
     }
 
     // Default location if not provided
@@ -117,7 +139,7 @@ const register = async (req, res) => {
 // @access  Public
 const login = async (req, res) => {
   try {
-    const { identifier, phone, password } = req.body;
+    const { identifier, phone, password, loginLat, loginLng } = req.body;
     
     // Support either new 'identifier' field or legacy 'phone' field
     const loginId = identifier || phone;
@@ -144,6 +166,22 @@ const login = async (req, res) => {
 
     if (!user.isVerified) {
       return res.status(403).json({ message: 'Please verify your email before logging in' });
+    }
+
+    // ── Location verification ────────────────────────────────────────────────
+    const regCoords = user.location?.coordinates; // [lng, lat]
+    const hasRegisteredLocation = regCoords && !(regCoords[0] === 0 && regCoords[1] === 0);
+    const hasLoginLocation = loginLat != null && loginLng != null;
+
+    if (hasRegisteredLocation && hasLoginLocation) {
+      const distKm = haversineKm(regCoords, [parseFloat(loginLng), parseFloat(loginLat)]);
+      if (distKm > MAX_LOGIN_KM) {
+        return res.status(403).json({
+          message: `Login blocked: Your current location is ${distKm.toFixed(1)} km away from your registered pharmacy. Maximum allowed is ${MAX_LOGIN_KM} km.`,
+          locationError: true,
+          distanceKm: distKm.toFixed(1),
+        });
+      }
     }
 
     res.json({
@@ -314,8 +352,12 @@ const resetPassword = async (req, res) => {
 // @access  Public
 const sendLoginOtp = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, loginLat, loginLng } = req.body;
     if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    // Store login coordinates in the request for later verification
+    req.loginLat = loginLat;
+    req.loginLng = loginLng;
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -362,7 +404,7 @@ const sendLoginOtp = async (req, res) => {
 // @access  Public
 const verifyLoginOtp = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { email, otp, loginLat, loginLng } = req.body;
     if (!email || !otp) {
       return res.status(400).json({ message: 'Email and OTP are required' });
     }
@@ -384,6 +426,22 @@ const verifyLoginOtp = async (req, res) => {
     const isMatch = await bcrypt.compare(otp.toString(), user.loginOtp);
     if (!isMatch) {
       return res.status(400).json({ message: 'Incorrect OTP. Please try again.' });
+    }
+
+    // ── Location verification ────────────────────────────────────────────────
+    const regCoords = user.location?.coordinates;
+    const hasRegisteredLocation = regCoords && !(regCoords[0] === 0 && regCoords[1] === 0);
+    const hasLoginLocation = loginLat != null && loginLng != null;
+
+    if (hasRegisteredLocation && hasLoginLocation) {
+      const distKm = haversineKm(regCoords, [parseFloat(loginLng), parseFloat(loginLat)]);
+      if (distKm > MAX_LOGIN_KM) {
+        return res.status(403).json({
+          message: `Login blocked: Your current location is ${distKm.toFixed(1)} km away from your registered pharmacy. Maximum allowed is ${MAX_LOGIN_KM} km.`,
+          locationError: true,
+          distanceKm: distKm.toFixed(1),
+        });
+      }
     }
 
     // Clear OTP after successful use

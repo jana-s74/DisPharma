@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -31,8 +31,12 @@ const Login = () => {
   const [mode, setMode] = useState('password');
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
+  const [locationError, setLocationError] = useState(null); // { distanceKm }
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // GPS status
+  const [gpsStatus, setGpsStatus] = useState('checking'); // 'checking' | 'ok' | 'denied'
 
   // OTP state
   const [otpEmail, setOtpEmail] = useState('');
@@ -41,9 +45,20 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [resent, setResent] = useState(false);
 
+  // Probe GPS on mount so status is ready before form submit
+  useEffect(() => {
+    if (!navigator.geolocation) { setGpsStatus('denied'); return; }
+    navigator.geolocation.getCurrentPosition(
+      () => setGpsStatus('ok'),
+      () => setGpsStatus('denied'),
+      { timeout: 6000 }
+    );
+  }, []);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');
+    setLocationError(null);
   };
 
   // ── Password login ────────────────────────────────────────────────────────
@@ -54,11 +69,17 @@ const Login = () => {
       return;
     }
     setLoading(true);
+    setLocationError(null);
     try {
       await login(form.identifier, form.password);
       navigate('/search');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      const data = err.response?.data || {};
+      if (data.locationError) {
+        setLocationError({ distanceKm: data.distanceKm });
+      } else {
+        setError(data.message || 'Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -107,11 +128,17 @@ const Login = () => {
     const code = otp.join('');
     if (code.length < 6) { setError('Please enter the complete 6-digit OTP.'); return; }
     setLoading(true);
+    setLocationError(null);
     try {
       await verifyLoginOtp(otpEmail, code);
       navigate('/search');
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid OTP. Please try again.');
+      const data = err.response?.data || {};
+      if (data.locationError) {
+        setLocationError({ distanceKm: data.distanceKm });
+      } else {
+        setError(data.message || 'Invalid OTP. Please try again.');
+      }
       setLoading(false);
     }
   };
@@ -179,6 +206,23 @@ const Login = () => {
     </div>
   ) : null;
 
+  // Location-blocked card
+  const LocationBlockedAlert = ({ data }) => data ? (
+    <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-sm">
+      <div className="flex items-center gap-2 font-bold text-amber-700 mb-1">
+        <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Login Blocked — Location Mismatch
+      </div>
+      <p className="text-amber-700">
+        Your device is <strong>{data.distanceKm} km</strong> away from your registered pharmacy.
+        Please log in from within your pharmacy premises.
+      </p>
+    </div>
+  ) : null;
+
   return (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 flex flex-col md:flex-row overflow-hidden border border-slate-100">
@@ -196,7 +240,7 @@ const Login = () => {
             <span className="text-2xl font-black text-[#0f3b2d]">DisPharma</span>
           </div>
 
-          {/* ── PASSWORD LOGIN ────────────────────────────────────────────── */}
+          {/* ── PASSWORD LOGIN ─────────────────────────────────────────────── */}
           {mode === 'password' && (
             <>
               <div className="mb-8">
@@ -204,8 +248,22 @@ const Login = () => {
                 <p className="text-slate-500">Enter your credentials to access your account.</p>
               </div>
 
+              {/* GPS status pill */}
+              <div className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full mb-5 ${
+                gpsStatus === 'ok'
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : gpsStatus === 'denied'
+                  ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                  : 'bg-slate-100 text-slate-500'
+              }`}>
+                {gpsStatus === 'ok' && <><span>📍</span> Location detected — location check active</>}
+                {gpsStatus === 'denied' && <><span>⚠️</span> Location unavailable — skipping location check</>}
+                {gpsStatus === 'checking' && <><span>🔄</span> Detecting location...</>}
+              </div>
+
               <form onSubmit={handlePasswordLogin} className="space-y-6">
                 <ErrorAlert msg={error} />
+                <LocationBlockedAlert data={locationError} />
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email or Phone Number</label>

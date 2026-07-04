@@ -13,8 +13,13 @@ const adminLogin = async (req, res) => {
     const inputEmail = (email || '').trim();
     const inputPass = (password || '').trim();
 
-    const ADMIN_EMAIL = 'janaselvarasu7@gmail.com';
-    const ADMIN_PASS = 'janaSK@1123';
+    const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').trim();
+    const ADMIN_PASS  = (process.env.ADMIN_PASS  || '').trim();
+
+    if (!ADMIN_EMAIL || !ADMIN_PASS) {
+      console.error('❌ ADMIN_EMAIL or ADMIN_PASS is not set in .env');
+      return res.status(500).json({ message: 'Admin credentials not configured' });
+    }
 
     if (inputEmail === ADMIN_EMAIL && inputPass === ADMIN_PASS) {
       const token = jwt.sign({ email: inputEmail, role: 'admin' }, process.env.JWT_SECRET, {

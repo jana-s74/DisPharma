@@ -3,6 +3,17 @@ import api from '../utils/api';
 
 const AuthContext = createContext(null);
 
+// ── Helper: get current GPS (resolves null if denied / unavailable) ────────────
+const getGPS = () =>
+  new Promise((resolve) => {
+    if (!navigator.geolocation) return resolve(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => resolve(null),
+      { timeout: 6000 }
+    );
+  });
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('dispharma_token'));
@@ -30,7 +41,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (identifier, password) => {
-    const res = await api.post('/auth/login', { identifier, password });
+    const gps = await getGPS();
+    const res = await api.post('/auth/login', {
+      identifier,
+      password,
+      loginLat: gps?.lat ?? null,
+      loginLng: gps?.lng ?? null,
+    });
     const { token: newToken, ...userData } = res.data;
     localStorage.setItem('dispharma_token', newToken);
     localStorage.setItem('dispharma_user', JSON.stringify(userData));
@@ -71,13 +88,31 @@ export const AuthProvider = ({ children }) => {
 
   // Send OTP to existing email for passwordless login
   const sendLoginOtp = async (email) => {
-    const res = await api.post('/auth/send-login-otp', { email });
+    const gps = await getGPS();
+    const res = await api.post('/auth/send-login-otp', {
+      email,
+      loginLat: gps?.lat ?? null,
+      loginLng: gps?.lng ?? null,
+    });
+    // Persist GPS so verifyLoginOtp can use it
+    if (gps) {
+      sessionStorage.setItem('loginGps', JSON.stringify(gps));
+    } else {
+      sessionStorage.removeItem('loginGps');
+    }
     return res.data;
   };
 
   // Verify OTP and log the user in
   const verifyLoginOtp = async (email, otp) => {
-    const res = await api.post('/auth/verify-login-otp', { email, otp });
+    const gps = JSON.parse(sessionStorage.getItem('loginGps') || 'null');
+    const res = await api.post('/auth/verify-login-otp', {
+      email,
+      otp,
+      loginLat: gps?.lat ?? null,
+      loginLng: gps?.lng ?? null,
+    });
+    sessionStorage.removeItem('loginGps');
     const { token: newToken, ...userData } = res.data;
     localStorage.setItem('dispharma_token', newToken);
     localStorage.setItem('dispharma_user', JSON.stringify(userData));

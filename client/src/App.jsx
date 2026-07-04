@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
+import Sidebar from './components/layout/Sidebar';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -39,8 +40,18 @@ const AppLayout = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-green-200">
       <Navbar />
-      <main className="pt-16 pb-16 min-h-screen" style={{ paddingTop: '64px' }}>
-        <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6">
+      {/* Sidebar — hidden on mobile, visible on lg+ */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
+      <main
+        className="pt-16 pb-16 min-h-screen"
+        style={{ paddingTop: '64px', paddingLeft: 'clamp(0px, 0px, 0px)' }}
+      >
+        {/* On large screens, push content right of sidebar */}
+        <div
+          className="lg:ml-[230px] max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 lg:max-w-none"
+        >
           <Outlet />
         </div>
       </main>
