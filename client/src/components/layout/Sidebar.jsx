@@ -181,7 +181,7 @@ const Sidebar = () => {
               height: '6px',
               borderRadius: '50%',
               background: '#16a34a',
-              animation: 'pulse 2s infinite',
+              animation: 'pulse-dot 2s infinite',
             }} />
           </div>
         )}
@@ -390,25 +390,6 @@ const Sidebar = () => {
         </button>
       </div>
 
-      {/* ── Hover styles via <style> ── */}
-      <style>{`
-        .sidebar-nav-item:hover {
-          background: #f8fafc !important;
-          color: #1e293b !important;
-          border-color: #e2e8f0 !important;
-        }
-        .sidebar-nav-item:hover .sidebar-item-arrow {
-          opacity: 1 !important;
-        }
-        .sidebar-logout-btn:hover {
-          background: #fef2f2 !important;
-          border-color: #fecaca !important;
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-      `}</style>
     </aside>
   );
 };

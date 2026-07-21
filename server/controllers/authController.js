@@ -172,14 +172,17 @@ const login = async (req, res) => {
     const regCoords = user.location?.coordinates; // [lng, lat]
     const hasRegisteredLocation = regCoords && !(regCoords[0] === 0 && regCoords[1] === 0);
     const hasLoginLocation = loginLat != null && loginLng != null;
+    // Use the user's personal limit if set, otherwise fall back to the global env setting
+    const effectiveMaxKm = (user.maxLoginDistanceKm != null) ? user.maxLoginDistanceKm : MAX_LOGIN_KM;
 
     if (hasRegisteredLocation && hasLoginLocation) {
       const distKm = haversineKm(regCoords, [parseFloat(loginLng), parseFloat(loginLat)]);
-      if (distKm > MAX_LOGIN_KM) {
+      if (distKm > effectiveMaxKm) {
         return res.status(403).json({
-          message: `Login blocked: Your current location is ${distKm.toFixed(1)} km away from your registered pharmacy. Maximum allowed is ${MAX_LOGIN_KM} km.`,
+          message: `Login blocked: Your current location is ${distKm.toFixed(1)} km away from your registered pharmacy. Maximum allowed is ${effectiveMaxKm} km.`,
           locationError: true,
           distanceKm: distKm.toFixed(1),
+          maxAllowedKm: effectiveMaxKm,
         });
       }
     }
@@ -194,6 +197,7 @@ const login = async (req, res) => {
       address: user.address,
       pincode: user.pincode,
       location: user.location,
+      maxLoginDistanceKm: user.maxLoginDistanceKm ?? null,
       token: generateToken(user._id),
     });
   } catch (error) {
@@ -218,6 +222,8 @@ const getMe = async (req, res) => {
     pincode: u.pincode,
     location: u.location,
     profilePhoto: u.profilePhoto || '',
+    website: u.website || '',
+    maxLoginDistanceKm: u.maxLoginDistanceKm ?? null,
   });
 };
 
@@ -432,14 +438,16 @@ const verifyLoginOtp = async (req, res) => {
     const regCoords = user.location?.coordinates;
     const hasRegisteredLocation = regCoords && !(regCoords[0] === 0 && regCoords[1] === 0);
     const hasLoginLocation = loginLat != null && loginLng != null;
+    const effectiveMaxKm = (user.maxLoginDistanceKm != null) ? user.maxLoginDistanceKm : MAX_LOGIN_KM;
 
     if (hasRegisteredLocation && hasLoginLocation) {
       const distKm = haversineKm(regCoords, [parseFloat(loginLng), parseFloat(loginLat)]);
-      if (distKm > MAX_LOGIN_KM) {
+      if (distKm > effectiveMaxKm) {
         return res.status(403).json({
-          message: `Login blocked: Your current location is ${distKm.toFixed(1)} km away from your registered pharmacy. Maximum allowed is ${MAX_LOGIN_KM} km.`,
+          message: `Login blocked: Your current location is ${distKm.toFixed(1)} km away from your registered pharmacy. Maximum allowed is ${effectiveMaxKm} km.`,
           locationError: true,
           distanceKm: distKm.toFixed(1),
+          maxAllowedKm: effectiveMaxKm,
         });
       }
     }
@@ -459,6 +467,7 @@ const verifyLoginOtp = async (req, res) => {
       address: user.address,
       pincode: user.pincode,
       location: user.location,
+      maxLoginDistanceKm: user.maxLoginDistanceKm ?? null,
       token: generateToken(user._id),
     });
   } catch (error) {
@@ -497,7 +506,7 @@ const verifyRegistrationOtp = async (req, res) => {
       return res.status(400).json({ message: 'Verification OTP has expired. Please register again.' });
     }
 
-    // Verify OTP (allow 999999 bypass in development)
+    // Verify OTP (allow 999999 bypass ONLY when NODE_ENV is explicitly 'development')
     const isTestBypass = process.env.NODE_ENV === 'development' && otp.toString() === '999999';
     const isMatch = isTestBypass || await bcrypt.compare(otp.toString(), user.verificationOtp);
     if (!isMatch) {
@@ -599,6 +608,43 @@ const resendVerificationOtp = async (req, res) => {
   }
 };
 
+// @desc    Update security/settings for logged-in user
+// @route   PUT /api/auth/settings
+// @access  Private
+const updateSettings = async (req, res) => {
+  try {
+    const { maxLoginDistanceKm } = req.body;
+
+    const update = {};
+
+    if (maxLoginDistanceKm !== undefined) {
+      if (maxLoginDistanceKm === null) {
+        update.maxLoginDistanceKm = null; // reset to global default
+      } else {
+        const km = parseFloat(maxLoginDistanceKm);
+        if (isNaN(km) || km < 0.5 || km > 500) {
+          return res.status(400).json({ message: 'Distance must be between 0.5 and 500 km' });
+        }
+        update.maxLoginDistanceKm = km;
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: update },
+      { new: true }
+    );
+
+    res.json({
+      message: 'Settings updated successfully',
+      maxLoginDistanceKm: user.maxLoginDistanceKm ?? null,
+    });
+  } catch (error) {
+    console.error('Update settings error:', error);
+    res.status(500).json({ message: 'Failed to update settings' });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -609,5 +655,6 @@ module.exports = {
   verifyLoginOtp,
   uploadProfilePhoto,
   verifyRegistrationOtp,
-  resendVerificationOtp
+  resendVerificationOtp,
+  updateSettings,
 };

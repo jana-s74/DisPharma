@@ -45,14 +45,16 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [resent, setResent] = useState(false);
 
-  // Probe GPS on mount so status is ready before form submit
+  // Probe GPS on mount — timeout after 8s so pill never stays in 'checking' forever
   useEffect(() => {
     if (!navigator.geolocation) { setGpsStatus('denied'); return; }
+    const timer = setTimeout(() => setGpsStatus('denied'), 8000);
     navigator.geolocation.getCurrentPosition(
-      () => setGpsStatus('ok'),
-      () => setGpsStatus('denied'),
-      { timeout: 6000 }
+      () => { clearTimeout(timer); setGpsStatus('ok'); },
+      () => { clearTimeout(timer); setGpsStatus('denied'); },
+      { timeout: 7000 }
     );
+    return () => clearTimeout(timer);
   }, []);
 
   const handleChange = (e) => {
@@ -410,6 +412,7 @@ const Login = () => {
 
               <form onSubmit={handleVerifyOtp} className="w-full">
                 <ErrorAlert msg={error} />
+                <LocationBlockedAlert data={locationError} />
 
                 <div className="flex justify-center gap-3 my-6" onPaste={handlePaste}>
                   {otp.map((digit, idx) => (
@@ -422,6 +425,7 @@ const Login = () => {
                       value={digit}
                       onChange={(e) => handleOtpChange(e.target.value, idx)}
                       onKeyDown={(e) => handleOtpKeyDown(e, idx)}
+                      aria-label={`OTP digit ${idx + 1} of 6`}
                       className="w-12 h-14 text-center text-xl font-bold border-2 rounded-xl outline-none transition-all
                         focus:border-[#16a34a] focus:ring-4 focus:ring-[#16a34a]/20 bg-slate-50 focus:bg-white text-slate-900
                         border-slate-200 caret-transparent"

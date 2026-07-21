@@ -174,6 +174,7 @@ const OtpLoginStep = ({ email, isRegisterOtp, onSuccess, onBack }) => {
               value={digit}
               onChange={(e) => handleOtpChange(e.target.value, idx)}
               onKeyDown={(e) => handleOtpKeyDown(e, idx)}
+              aria-label={`OTP digit ${idx + 1} of 6`}
               className="w-12 h-14 text-center text-xl font-bold border-2 rounded-xl outline-none transition-all
                 focus:border-[#16a34a] focus:ring-4 focus:ring-[#16a34a]/20 bg-slate-50 focus:bg-white text-slate-900
                 border-slate-200 caret-transparent"
@@ -429,9 +430,9 @@ const Register = () => {
                   ) : geoStatus === 'success' ? (
                     <><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Location Saved</>
                   ) : geoStatus === 'error' ? (
-                    <><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Try Again</>
+                    <><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Permission denied — location won't be saved</>
                   ) : (
-                    <><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> Auto-Detect Location</>
+                    <><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> Auto-Detect Location (Recommended)</>
                   )}
                 </button>
               </div>

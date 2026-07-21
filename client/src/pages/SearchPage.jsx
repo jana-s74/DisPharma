@@ -51,10 +51,8 @@ const SearchPage = () => {
     doSearch();
   }, [query]);
 
-  console.log(exploreData, "sdnjsn")
 
   const handleSelect = (item) => {
-    console.log(item, 'dsndskj')
     setSelectedItems((prev) => {
       const exists = prev.find((s) => s._id === item._id);
       if (exists) return prev.filter((s) => s._id !== item._id);

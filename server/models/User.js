@@ -87,6 +87,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  maxLoginDistanceKm: {
+    type: Number,
+    default: null, // null = use global MAX_LOGIN_DISTANCE_KM env setting
+    min: 0.5,
+    max: 500,
+  },
 });
 
 userSchema.index({ location: '2dsphere' });

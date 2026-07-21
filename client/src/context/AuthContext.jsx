@@ -15,8 +15,10 @@ const getGPS = () =>
   });
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('dispharma_token'));
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dispharma_user') || 'null'); } catch { return null; }
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('dispharma_token') || null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -134,8 +136,32 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('dispharma_user', JSON.stringify(updated));
   };
 
+  // Update user security/settings (e.g. maxLoginDistanceKm)
+  const updateSettings = async (settings) => {
+    const res = await api.put('/auth/settings', settings);
+    // Sync the returned fields into local user state
+    updateUser(res.data);
+    return res.data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, updateUser, sendLoginOtp, verifyLoginOtp, verifyRegisterOtp, resendRegisterOtp, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{
+      user,
+      token,
+      loading,
+      login,
+      register,
+      logout,
+      updateUser,
+      updateSettings,
+      sendLoginOtp,
+      verifyLoginOtp,
+      verifyRegisterOtp,
+      resendRegisterOtp,
+      // isAuthenticated is derived purely from React state (not localStorage)
+      // to avoid stale-token flash during initAuth
+      isAuthenticated: !!token,
+    }}>
       {children}
     </AuthContext.Provider>
   );

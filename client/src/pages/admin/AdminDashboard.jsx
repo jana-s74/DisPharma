@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [pharmacies, setPharmacies] = useState([]);
@@ -158,9 +160,9 @@ const AdminDashboard = () => {
       try {
         setLoading(true);
         const [statsRes, pharmRes, txRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/admin/stats', config),
-          axios.get('http://localhost:5000/api/admin/pharmacies', config),
-          axios.get('http://localhost:5000/api/admin/transactions', config),
+          axios.get(`${API_BASE}/admin/stats`, config),
+          axios.get(`${API_BASE}/admin/pharmacies`, config),
+          axios.get(`${API_BASE}/admin/transactions`, config),
         ]);
 
         setStats(statsRes.data);
